@@ -28,6 +28,7 @@ import {
   lucideMail,
   lucideUserPlus,
 } from '@ng-icons/lucide';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'angelitosystems-register',
@@ -64,7 +65,11 @@ export class Register {
   showConfirmPassword = signal(false);
   isLoading = signal(false);
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder, 
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.registerForm = this.fb.group(
       {
         name: ['', [Validators.required, Validators.minLength(2)]],
@@ -98,11 +103,27 @@ export class Register {
   onSubmit() {
     if (this.registerForm.valid) {
       this.isLoading.set(true);
-      // Simular registro
-      setTimeout(() => {
-        this.isLoading.set(false);
-        this.router.navigate(['/dashboard']);
-      }, 2000);
+      
+      const userData = {
+        name: this.registerForm.value.name,
+        email: this.registerForm.value.email,
+        password: this.registerForm.value.password,
+        password_confirmation: this.registerForm.value.confirmPassword
+      };
+
+      this.authService.register(userData).subscribe({
+        next: (response) => {
+          this.isLoading.set(false);
+          console.log('Registro exitoso:', response);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          console.error('Error en registro:', error);
+          // Aquí puedes agregar manejo de errores más específico
+          // Por ejemplo, mostrar un toast o mensaje de error
+        }
+      });
     }
   }
 

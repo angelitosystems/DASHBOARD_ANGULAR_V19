@@ -115,7 +115,19 @@ Route::prefix('v1')->group(function () {
 });
 ```
 
-4. **Configura la URL del API** en `src/environments/environment.ts`:
+4. **Instala Laravel Sanctum** para autenticación:
+```bash
+composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan migrate
+```
+
+5. **Configura Sanctum** en `config/sanctum.php`:
+```php
+'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,localhost:4200')),
+```
+
+6. **Configura la URL del API** en `src/environments/environment.ts`:
 ```typescript
 export const environment = {
   production: false,
@@ -129,14 +141,65 @@ El dashboard incluye servicios Angular optimizados para trabajar con Laravel:
 
 - **UserService**: Gestión de usuarios con endpoints CRUD
 - **ReportService**: Generación y consulta de reportes
-- **AuthService**: Autenticación con Laravel Sanctum
+- **AuthService**: Autenticación completa con Laravel Sanctum, manejo de CSRF, login, registro y logout
 - **DashboardService**: Estadísticas y métricas del dashboard
+- **HTTP Interceptor**: Configuración automática de headers, tokens CSRF y manejo de rutas Sanctum para Laravel
+- **AuthGuard**: Protección de rutas autenticadas con redirección automática
+- **GuestGuard**: Prevención de acceso a rutas de autenticación para usuarios ya logueados
 
 ### Controladores Laravel Sugeridos
 
 Ejemplos de controladores Laravel que funcionan perfectamente con este dashboard:
 
 ```php
+// app/Http/Controllers/Api/AuthController.php
+class AuthController extends Controller
+{
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            $token = $user->createToken('auth-token')->plainTextToken;
+
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+                'token_type' => 'Bearer'
+            ]);
+        }
+
+        return response()->json(['message' => 'Invalid credentials'], 401);
+    }
+
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed'
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password'])
+        ]);
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ]);
+    }
+}
+
 // app/Http/Controllers/Api/UserController.php
 class UserController extends Controller
 {
@@ -168,27 +231,98 @@ class DashboardController extends Controller
 }
 ```
 
+### Características de Autenticación Implementadas
+
+✅ **Token CSRF Automático**: El interceptor obtiene automáticamente el token CSRF de Laravel Sanctum desde múltiples fuentes (meta tag, cookie XSRF-TOKEN, localStorage)
+
+✅ **Autenticación Stateful**: Soporte completo para cookies de sesión de Laravel con configuración automática de credenciales
+
+✅ **Manejo de Errores**: Gestión automática de errores de autenticación con redirección inteligente
+
+✅ **Headers Automáticos**: Configuración automática de headers necesarios para Laravel (Accept, Content-Type, X-Requested-With)
+
+✅ **Rutas Protegidas**: Sistema de guards completo con `authGuard` para rutas autenticadas y `guestGuard` para rutas públicas
+
+✅ **Persistencia de Sesión**: Mantenimiento de sesión entre recargas de página con recuperación automática de datos de usuario
+
+✅ **Redirección Inteligente**: Sistema de `returnUrl` para redirigir usuarios a la página solicitada después del login
+
+✅ **Fetch API Support**: Configuración con `withFetch()` para soporte completo de opciones HTTP modernas
+
+✅ **Logout Completo**: Funcionalidad de logout integrada en el layout con limpieza de sesión y redirección
+
+✅ **Información de Usuario Dinámica**: Visualización automática de datos del usuario autenticado en el dashboard
+
+## 🆕 Últimas Actualizaciones y Mejoras
+
+### Sistema de Autenticación Robusto
+- **AuthService Mejorado**: Integración completa con Laravel Sanctum incluyendo obtención automática de tokens CSRF
+- **Guards Implementados**: 
+  - `authGuard`: Protege rutas del dashboard y redirige a login si no está autenticado
+  - `guestGuard`: Previene acceso a login/registro si ya está autenticado
+- **Interceptor HTTP Avanzado**: Manejo inteligente de rutas Sanctum y configuración automática de headers
+- **Redirección Inteligente**: Sistema `returnUrl` que redirige al usuario a la página solicitada después del login
+
+### Configuración de Entornos
+- **Separación de Entornos**: Configuración completa para desarrollo y producción
+- **FileReplacements**: Configuración automática en `angular.json` para reemplazo de archivos de entorno
+- **URLs de API**: Configuración correcta para `http://localhost:8000/api/v1` en ambos entornos
+
+### Mejoras en el Frontend
+- **Fetch API**: Habilitado `withFetch()` en `app.config.ts` para soporte completo de opciones HTTP modernas
+- **Layout Dinámico**: Dashboard layout actualizado con información de usuario en tiempo real
+- **Logout Funcional**: Implementación completa de logout con limpieza de sesión
+- **Manejo de Estados**: Visualización de estados de carga y manejo de errores mejorado
+
+### Archivos Principales Actualizados
+- `src/app/common/guards/auth-guard.ts` - Guard de autenticación
+- `src/app/common/guards/guest-guard.ts` - Guard para usuarios no autenticados
+- `src/app/common/interceptors/backend-interceptor.ts` - Interceptor HTTP mejorado
+- `src/app/services/auth.service.ts` - Servicio de autenticación completo
+- `src/app/pages/auth/login.ts` - Login con redirección inteligente
+- `src/app/pages/auth/register.ts` - Registro integrado con AuthService
+- `src/app/layout/dashboard-layout.ts` - Layout con logout y usuario dinámico
+- `src/app/app.config.ts` - Configuración con Fetch API
+- `src/app/app.routes.ts` - Rutas protegidas con guards
+- `src/app/auth.routes.ts` - Rutas de autenticación con guest guard
+- `src/environments/environment.ts` - Configuración de producción
+- `src/environments/environment.development.ts` - Configuración de desarrollo
+- `angular.json` - Configuración de builds con fileReplacements
+
 ## 🏗️ Estructura del Proyecto
 
 ```
 dashboard_template/
 ├── src/
 │   ├── app/
+│   │   ├── common/
+│   │   │   ├── guards/          # Guards de autenticación
+│   │   │   │   ├── auth-guard.ts    # Protección rutas autenticadas
+│   │   │   │   └── guest-guard.ts   # Protección rutas públicas
+│   │   │   └── interceptors/    # Interceptores HTTP
+│   │   │       └── backend-interceptor.ts # Configuración Laravel
 │   │   ├── components/          # Componentes reutilizables
 │   │   ├── layout/              # Layout principal del dashboard
+│   │   │   └── dashboard-layout/ # Layout con logout y usuario dinámico
 │   │   ├── pages/
 │   │   │   ├── dashboard/
 │   │   │   │   ├── home/        # Página principal
 │   │   │   │   ├── users/       # Gestión de usuarios
 │   │   │   │   ├── reports/     # Reportes y estadísticas
 │   │   │   │   └── settings/    # Configuración
-│   │   │   └── auth/            # Autenticación
+│   │   │   └── auth/            # Autenticación con login/registro
 │   │   ├── services/            # Servicios de Angular
-│   │   └── app.routes.ts        # Configuración de rutas
+│   │   │   └── auth.service.ts  # Servicio de autenticación completo
+│   │   ├── app.config.ts        # Configuración con withFetch()
+│   │   ├── app.routes.ts        # Rutas con guards aplicados
+│   │   └── auth.routes.ts       # Rutas de autenticación
+│   ├── environments/            # Configuración de entornos
+│   │   ├── environment.ts       # Producción
+│   │   └── environment.development.ts # Desarrollo
 │   ├── assets/                  # Recursos estáticos
 │   └── styles/                  # Estilos globales
 ├── tailwind.config.js           # Configuración de Tailwind
-├── angular.json                 # Configuración de Angular
+├── angular.json                 # Configuración con fileReplacements
 └── package.json                 # Dependencias del proyecto
 ```
 
@@ -259,9 +393,16 @@ ng generate service <name>   # Generar servicio
 
 ### Angular
 La configuración principal se encuentra en:
-- `angular.json` - Configuración del workspace
+- `angular.json` - Configuración del workspace con fileReplacements para entornos
 - `tsconfig.json` - Configuración de TypeScript
-- `src/app/app.config.ts` - Configuración de la aplicación
+- `src/app/app.config.ts` - Configuración de la aplicación con `withFetch()` habilitado
+- `src/environments/` - Configuración de entornos (desarrollo y producción)
+
+### Entornos
+Configuración automática de entornos:
+- **Desarrollo**: `environment.development.ts` con `apiUrl: 'http://localhost:8000/api/v1'`
+- **Producción**: `environment.ts` con configuración optimizada
+- **Build**: `angular.json` configurado con `fileReplacements` automáticos
 
 ### TailwindCSS
 La configuración de Tailwind está en `tailwind.config.js` con:
@@ -270,17 +411,27 @@ La configuración de Tailwind está en `tailwind.config.js` con:
 - Animaciones personalizadas
 - Sombras modernas
 
+### Autenticación
+Configuración completa de autenticación:
+- **Guards**: Protección automática de rutas
+- **Interceptors**: Manejo automático de headers y CSRF
+- **Services**: Integración completa con Laravel Sanctum
+- **Redirects**: Sistema inteligente de redirecciones
+
 ## 🌟 Características Destacadas
 
 - **Template Listo**: Base sólida para cualquier proyecto administrativo
+- **Autenticación Completa**: Sistema robusto con Laravel Sanctum, guards y redirects inteligentes
 - **Fácil Personalización**: Estructura modular y bien organizada
-- **Rendimiento**: Optimizado para carga rápida y navegación fluida
+- **Rendimiento**: Optimizado para carga rápida y navegación fluida con Fetch API
 - **Accesibilidad**: Cumple con estándares WCAG
 - **SEO**: Estructura optimizada para motores de búsqueda
-- **Seguridad**: Implementación de mejores prácticas de seguridad
+- **Seguridad**: Implementación de mejores prácticas de seguridad con CSRF y guards
 - **Mantenibilidad**: Código limpio y bien documentado
 - **Escalabilidad**: Arquitectura preparada para crecimiento
 - **UX/UI**: Diseño intuitivo y experiencia de usuario excepcional
+- **Entornos**: Configuración automática para desarrollo y producción
+- **Laravel Ready**: Integración perfecta con Laravel y Sanctum
 - **Documentación**: Guías claras para personalización
 
 ## 📄 Licencia

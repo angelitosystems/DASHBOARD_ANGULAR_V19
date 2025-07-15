@@ -5,6 +5,7 @@ import { NotFound } from './pages/not-found/not-found.component';
 import { Home } from './pages/dashboard/home/home';
 import { Users } from './pages/dashboard/users/users.component';
 import { Settings } from './pages/dashboard/settings/settings';
+import { authGuard } from './common/guard/auth-guard';
 
 export const routes: Routes = [
   {
@@ -16,6 +17,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardLayout,
+    canActivate: [authGuard],
     children: [
       { path: '', component: Home },
       { path: 'home', component: Home },

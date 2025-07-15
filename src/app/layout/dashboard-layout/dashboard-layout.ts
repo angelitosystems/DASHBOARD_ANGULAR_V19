@@ -1,6 +1,8 @@
 import { Component, signal, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
 import { ThemeService } from '../../services/theme.service';
+import { AuthService } from '../../services/auth.service';
 import { HlmButtonDirective } from '@spartan-ng/helm/button';
 import { HlmIconDirective } from '@spartan-ng/helm/icon';
 import { HlmSeparatorDirective } from '@spartan-ng/helm/separator';
@@ -48,6 +50,7 @@ interface MenuItem {
   selector: 'angelitosystems-dashboard-layout',
   imports: [
     RouterOutlet,
+    AsyncPipe,
     HlmButtonDirective,
     HlmIconDirective,
     HlmSeparatorDirective,
@@ -87,11 +90,13 @@ interface MenuItem {
 export class DashboardLayout {
   private router = inject(Router);
   private themeService = inject(ThemeService);
+  private authService = inject(AuthService);
 
   sidebarCollapsed = signal(false);
   isDarkMode = this.themeService.isDarkMode;
   currentPageTitle = signal('Inicio');
   userMenuOpen = signal(false);
+  currentUser$ = this.authService.currentUser$;
 
   menuItems: MenuItem[] = [
     { icon: 'lucideHouse', label: 'Dashboard', route: '/dashboard' },
@@ -146,8 +151,16 @@ export class DashboardLayout {
   }
 
   logout() {
-    // Lógica de logout
-    this.router.navigate(['/auth/login']);
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/auth/login']);
+      },
+      error: (error) => {
+        console.error('Error durante logout:', error);
+        // Incluso si hay error, limpiar datos locales y redirigir
+        this.router.navigate(['/auth/login']);
+      }
+    });
   }
 
   goToProfile() {

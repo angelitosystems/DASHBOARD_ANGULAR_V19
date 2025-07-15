@@ -183,14 +183,25 @@
               class="flex items-center space-x-3 pl-2 pr-3 py-2 rounded-xl hover:bg-muted/50 transition-all duration-200 group"
               (click)="toggleUserMenu()"
             >
+              @if (currentUser$ | async; as user) {
               <div class="hidden lg:block text-right">
                 <p
                   class="text-sm font-semibold text-foreground group-hover:text-primary transition-colors"
                 >
-                  Usuario Demo
+                  {{ user.name }}
                 </p>
-                <p class="text-xs text-muted-foreground">admin&#64;demo.com</p>
+                <p class="text-xs text-muted-foreground">{{ user.email }}</p>
               </div>
+              } @else {
+              <div class="hidden lg:block text-right">
+                <p
+                  class="text-sm font-semibold text-foreground group-hover:text-primary transition-colors"
+                >
+                  Cargando...
+                </p>
+                <p class="text-xs text-muted-foreground">---</p>
+              </div>
+              }
               <div class="relative">
                 <hlm-avatar
                   class="h-10 w-10 ring-2 ring-primary ring-opacity-20 group-hover:ring-primary group-hover:ring-opacity-40 transition-all duration-200"
@@ -201,11 +212,19 @@
                     alt="Usuario"
                     class="transition-transform duration-200 group-hover:scale-105"
                   />
-                  <span
-                    hlmAvatarFallback
-                    class="bg-primary text-primary-foreground font-semibold"
-                    >UD</span
-                  >
+                  @if (currentUser$ | async; as user) {
+                <span
+                  hlmAvatarFallback
+                  class="bg-primary text-primary-foreground font-semibold"
+                  >{{ user.name.charAt(0).toUpperCase() }}{{ (user.name.split(' ')[1] || '').charAt(0).toUpperCase() }}</span
+                >
+                } @else {
+                <span
+                  hlmAvatarFallback
+                  class="bg-primary text-primary-foreground font-semibold"
+                  >?</span
+                >
+                }
                 </hlm-avatar>
                 <div
                   class="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-background shadow-modern-sm animate-pulse"
@@ -258,24 +277,43 @@
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                 alt="Usuario"
               />
+              @if (currentUser$ | async; as user) {
               <span
                 hlmAvatarFallback
                 class="bg-primary text-primary-foreground font-semibold"
-                >UD</span
+                >{{ user.name.charAt(0).toUpperCase() }}{{ (user.name.split(' ')[1] || '').charAt(0).toUpperCase() }}</span
               >
+              } @else {
+              <span
+                hlmAvatarFallback
+                class="bg-primary text-primary-foreground font-semibold"
+                >?</span
+              >
+              }
             </hlm-avatar>
             <div
               class="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-background"
             ></div>
           </div>
+          @if (currentUser$ | async; as user) {
           <div class="flex-1 min-w-0">
             <h3 class="text-base font-semibold text-foreground truncate">
-              Usuario Demo
+              {{ user.name }}
             </h3>
             <p class="text-sm text-muted-foreground truncate">
-              admin&#64;demo.com
+              {{ user.email }}
             </p>
           </div>
+          } @else {
+          <div class="flex-1 min-w-0">
+            <h3 class="text-base font-semibold text-foreground truncate">
+              Cargando...
+            </h3>
+            <p class="text-sm text-muted-foreground truncate">
+              ---
+            </p>
+          </div>
+          }
         </div>
       </div>
 
