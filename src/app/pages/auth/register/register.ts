@@ -29,6 +29,7 @@ import {
   lucideUserPlus,
 } from '@ng-icons/lucide';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'angelitosystems-register',
@@ -68,7 +69,8 @@ export class Register {
   constructor(
     private fb: FormBuilder, 
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) {
     this.registerForm = this.fb.group(
       {
@@ -114,14 +116,41 @@ export class Register {
       this.authService.register(userData).subscribe({
         next: (response) => {
           this.isLoading.set(false);
-          console.log('Registro exitoso:', response);
+          this.toastService.success(
+            `¡Cuenta creada exitosamente! Bienvenido ${response.user.name}`,
+            'Registro completado'
+          );
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
           this.isLoading.set(false);
-          console.error('Error en registro:', error);
-          // Aquí puedes agregar manejo de errores más específico
-          // Por ejemplo, mostrar un toast o mensaje de error
+          
+          let errorMessage = 'Ha ocurrido un error inesperado durante el registro';
+          
+          if (error.status === 422) {
+            // Errores de validación
+            if (error.error?.errors) {
+              const errors = error.error.errors;
+              if (errors.email) {
+                errorMessage = 'Este email ya está registrado. Intenta con otro email.';
+              } else if (errors.password) {
+                errorMessage = 'La contraseña no cumple con los requisitos mínimos.';
+              } else {
+                errorMessage = 'Los datos proporcionados no son válidos.';
+              }
+            } else {
+              errorMessage = 'Los datos proporcionados no son válidos.';
+            }
+          } else if (error.status === 429) {
+            errorMessage = 'Demasiados intentos. Intenta nuevamente más tarde.';
+          } else if (error.status === 0) {
+            errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión.';
+          }
+          
+          this.toastService.error(
+            errorMessage,
+            'Error de registro'
+          );
         }
       });
     }

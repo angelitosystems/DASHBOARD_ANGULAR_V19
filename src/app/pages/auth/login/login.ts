@@ -10,6 +10,7 @@ import { HlmIconDirective } from '@spartan-ng/helm/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideEye, lucideEyeOff, lucideUser, lucideLock } from '@ng-icons/lucide';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'angelitosystems-login',
@@ -42,7 +43,8 @@ export class Login {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -69,14 +71,31 @@ export class Login {
       this.authService.login(credentials).subscribe({
         next: (response) => {
           this.isLoading.set(false);
-          console.log('Login exitoso:', response);
+          this.toastService.success(
+            `¡Bienvenido ${response.user.name}!`,
+            'Inicio de sesión exitoso'
+          );
           this.router.navigate([this.returnUrl]);
         },
         error: (error) => {
           this.isLoading.set(false);
-          console.error('Error en login:', error);
-          // Aquí puedes agregar manejo de errores más específico
-          // Por ejemplo, mostrar un toast o mensaje de error
+          
+          let errorMessage = 'Ha ocurrido un error inesperado';
+          
+          if (error.status === 401) {
+            errorMessage = 'Credenciales incorrectas. Verifica tu email y contraseña.';
+          } else if (error.status === 422) {
+            errorMessage = 'Los datos proporcionados no son válidos.';
+          } else if (error.status === 429) {
+            errorMessage = 'Demasiados intentos. Intenta nuevamente más tarde.';
+          } else if (error.status === 0) {
+            errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión.';
+          }
+          
+          this.toastService.error(
+            errorMessage,
+            'Error de autenticación'
+          );
         }
       });
     }
