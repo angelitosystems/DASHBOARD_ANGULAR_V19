@@ -1,6 +1,6 @@
 # Dashboard Template 🚀
 
-Un template de dashboard moderno y responsivo desarrollado con **Angular 19** y **Tailwind CSS v3** para desarrolladores que buscan una base sólida para sus proyectos administrativos. **Específicamente orientado para integrarse con Laravel como backend**.
+Un template de dashboard moderno y responsivo desarrollado con **Angular 20.0.3** y **Tailwind CSS v3** para desarrolladores que buscan una base sólida para sus proyectos administrativos. **Específicamente orientado para integrarse con Laravel como backend**.
 
 ## ✨ Características Principales
 
@@ -17,11 +17,13 @@ Un template de dashboard moderno y responsivo desarrollado con **Angular 19** y 
 ## 🎯 Funcionalidades
 
 ### Dashboard Principal
+
 - Vista general con métricas clave
 - Gráficos interactivos y estadísticas
 - Navegación intuitiva
 
 ### Gestión de Usuarios
+
 - Lista completa de usuarios del sistema
 - Filtros por rol y estado
 - Búsqueda en tiempo real
@@ -29,6 +31,7 @@ Un template de dashboard moderno y responsivo desarrollado con **Angular 19** y 
 - Paginación eficiente
 
 ### Reportes Avanzados
+
 - Distribución de usuarios por departamento
 - Análisis de actividad del sistema
 - Métricas de rendimiento
@@ -36,6 +39,7 @@ Un template de dashboard moderno y responsivo desarrollado con **Angular 19** y 
 - Actividad reciente del sistema
 
 ### Configuración
+
 - Gestión de preferencias de usuario
 - Configuración de tema
 - Opciones de personalización
@@ -43,6 +47,7 @@ Un template de dashboard moderno y responsivo desarrollado con **Angular 19** y 
 ## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
+
 - **Frontend**: Angular 19, TypeScript
 - **Estilos**: Tailwind CSS v3
 - **Componentes**: Spartan-NG Helm
@@ -52,6 +57,7 @@ Un template de dashboard moderno y responsivo desarrollado con **Angular 19** y 
 - **Template**: Listo para personalizar
 
 ### Backend Recomendado
+
 - **Laravel**: Framework PHP para APIs REST
 - **MySQL/PostgreSQL**: Base de datos
 - **Laravel Sanctum**: Autenticación API
@@ -59,6 +65,7 @@ Un template de dashboard moderno y responsivo desarrollado con **Angular 19** y 
 ## 📦 Instalación
 
 ### Prerrequisitos
+
 - Node.js (versión 18 o superior)
 - npm o yarn
 - Angular CLI
@@ -66,17 +73,20 @@ Un template de dashboard moderno y responsivo desarrollado con **Angular 19** y 
 ### Pasos de instalación
 
 1. **Clonar el repositorio**
+
    ```bash
    git clone <url-del-repositorio>
    cd dashboard_countries
    ```
 
 2. **Instalar dependencias**
+
    ```bash
    npm install
    ```
 
 3. **Ejecutar en modo desarrollo**
+
    ```bash
    npm start
    # o
@@ -95,18 +105,21 @@ Este dashboard está diseñado para trabajar con Laravel como backend. Para una 
 ### Configuración del Backend Laravel
 
 1. **Instala Laravel**:
+
 ```bash
 composer create-project laravel/laravel dashboard-api
 cd dashboard-api
 ```
 
 2. **Configura CORS** en `config/cors.php`:
+
 ```php
 'paths' => ['api/*'],
 'allowed_origins' => ['http://localhost:4200'],
 ```
 
 3. **Crea las rutas API** en `routes/api.php`:
+
 ```php
 Route::prefix('v1')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
@@ -116,6 +129,7 @@ Route::prefix('v1')->group(function () {
 ```
 
 4. **Instala Laravel Sanctum** para autenticación:
+
 ```bash
 composer require laravel/sanctum
 php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
@@ -123,15 +137,17 @@ php artisan migrate
 ```
 
 5. **Configura Sanctum** en `config/sanctum.php`:
+
 ```php
 'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,localhost:4200')),
 ```
 
 6. **Configura la URL del API** en `src/environments/environment.ts`:
+
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8000/api/v1'
+  apiUrl: "http://localhost:8000/api/v1",
 };
 ```
 
@@ -255,38 +271,82 @@ class DashboardController extends Controller
 
 ## 🆕 Últimas Actualizaciones y Mejoras
 
+### Sistema de Notificaciones Toast 🍞
+
+- **ToastService Completo**: Servicio robusto para mostrar notificaciones con 4 tipos (success, error, warning, info)
+- **ToastContainer Component**: Contenedor de toasts con posicionamiento configurable (6 posiciones disponibles)
+- **ToastItem Component**: Componente individual de toast con animaciones fluidas y acciones personalizables
+- **Animaciones Avanzadas**: Transiciones suaves de entrada/salida con efectos específicos por posición
+- **Configuración Flexible**:
+  - Posiciones: top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
+  - Duración personalizable por toast
+  - Límite máximo de toasts mostrados simultáneamente
+  - Botones de acción opcionales
+  - Auto-dismiss configurable
+- **Responsive Design**: Adaptación automática en dispositivos móviles
+- **Iconografía Consistente**: Íconos específicos por tipo de notificación usando Lucide Icons
+- **Z-Index Optimizado**: Posicionamiento correcto sobre todos los elementos del dashboard
+
 ### Sistema de Autenticación Robusto
+
 - **AuthService Mejorado**: Integración completa con Laravel Sanctum incluyendo obtención automática de tokens CSRF
-- **Guards Implementados**: 
+- **Guards Implementados**:
   - `authGuard`: Protege rutas del dashboard y redirige a login si no está autenticado
   - `guestGuard`: Previene acceso a login/registro si ya está autenticado
 - **Interceptor HTTP Avanzado**: Manejo inteligente de rutas Sanctum y configuración automática de headers
 - **Redirección Inteligente**: Sistema `returnUrl` que redirige al usuario a la página solicitada después del login
 
+### Mejoras en UI/UX
+
+- **Página 404 Moderna**: Página de error personalizada con animaciones espaciales y navegación intuitiva
+- **Sidebar Mejorado**: Indicadores circulares cuando está colapsado con transiciones suaves
+- **Menú de Usuario Avanzado**: Dropdown elegante con backdrop blur y posicionamiento optimizado
+- **Tema Dinámico**: Sistema completo de temas claro/oscuro con ThemeService
+
 ### Configuración de Entornos
+
 - **Separación de Entornos**: Configuración completa para desarrollo y producción
 - **FileReplacements**: Configuración automática en `angular.json` para reemplazo de archivos de entorno
 - **URLs de API**: Configuración correcta para `http://localhost:8000/api/v1` en ambos entornos
 
 ### Mejoras en el Frontend
+
 - **Fetch API**: Habilitado `withFetch()` en `app.config.ts` para soporte completo de opciones HTTP modernas
 - **Layout Dinámico**: Dashboard layout actualizado con información de usuario en tiempo real
 - **Logout Funcional**: Implementación completa de logout con limpieza de sesión
 - **Manejo de Estados**: Visualización de estados de carga y manejo de errores mejorado
 
 ### Archivos Principales Actualizados
+
+#### Sistema de Notificaciones
+
+- `src/app/components/ui/ui-toast/toast-container.component.ts` - Contenedor principal de toasts
+- `src/app/components/ui/ui-toast/toast-item.component.ts` - Componente individual de toast
+- `src/app/services/toast.service.ts` - Servicio de gestión de notificaciones
+- `src/app/services/theme.service.ts` - Servicio de gestión de temas
+
+#### Autenticación y Seguridad
+
 - `src/app/common/guards/auth-guard.ts` - Guard de autenticación
 - `src/app/common/guards/guest-guard.ts` - Guard para usuarios no autenticados
 - `src/app/common/interceptors/backend-interceptor.ts` - Interceptor HTTP mejorado
 - `src/app/services/auth.service.ts` - Servicio de autenticación completo
+
+#### Páginas y Layout
+
 - `src/app/pages/auth/login.ts` - Login con redirección inteligente
 - `src/app/pages/auth/register.ts` - Registro integrado con AuthService
-- `src/app/layout/dashboard-layout.ts` - Layout con logout y usuario dinámico
+- `src/app/pages/not-found/not-found.component.ts` - Página 404 moderna
+- `src/app/layout/dashboard-layout/dashboard-layout.html` - Layout mejorado con menú de usuario
+
+#### Configuración
+
 - `src/app/app.config.ts` - Configuración con Fetch API
 - `src/app/app.routes.ts` - Rutas protegidas con guards
 - `src/app/auth.routes.ts` - Rutas de autenticación con guest guard
 - `src/environments/environment.ts` - Configuración de producción
 - `src/environments/environment.development.ts` - Configuración de desarrollo
+- `src/styles.css` - Estilos globales modernos
 - `angular.json` - Configuración de builds con fileReplacements
 
 ## 🏗️ Estructura del Proyecto
@@ -329,6 +389,7 @@ dashboard_template/
 ## 🎨 Personalización
 
 ### Temas
+
 El dashboard incluye soporte completo para temas oscuro y claro:
 
 ```typescript
@@ -337,6 +398,7 @@ themeService.toggleTheme();
 ```
 
 ### Colores
+
 Personaliza los colores en `tailwind.config.js`:
 
 ```javascript
@@ -346,26 +408,81 @@ module.exports = {
       colors: {
         primary: {
           // Tus colores personalizados
-        }
-      }
-    }
-  }
-}
+        },
+      },
+    },
+  },
+};
 ```
 
 ### Adaptación del Template
+
 1. **Modifica los datos mock** en los componentes para tu dominio específico
 2. **Personaliza las rutas** en `app.routes.ts`
 3. **Ajusta el menú** en `dashboard-layout.ts`
 4. **Cambia los iconos** según tu necesidad
 5. **Adapta los formularios** y tablas a tu modelo de datos
 
+### Sistema de Notificaciones Toast
+
+El dashboard incluye un sistema completo de notificaciones toast. Para usarlo:
+
+```typescript
+// Inyectar el servicio en tu componente
+constructor(private toastService: ToastService) {}
+
+// Mostrar diferentes tipos de notificaciones
+showSuccess() {
+  this.toastService.success('Operación completada exitosamente', 'Éxito');
+}
+
+showError() {
+  this.toastService.error('Ha ocurrido un error', 'Error');
+}
+
+showWarning() {
+  this.toastService.warning('Advertencia importante', 'Atención');
+}
+
+showInfo() {
+  this.toastService.info('Información relevante', 'Info');
+}
+
+// Toast personalizado con acción
+showCustomToast() {
+  this.toastService.addToast({
+    type: 'success',
+    title: 'Archivo subido',
+    message: 'El archivo se ha subido correctamente',
+    duration: 5000,
+    action: {
+      label: 'Ver archivo',
+      handler: () => console.log('Acción ejecutada')
+    }
+  });
+}
+```
+
+**Agregar el contenedor de toasts en tu layout:**
+
+```html
+<!-- En tu app.component.html o layout principal -->
+<app-toast-container position="bottom-right" [maxToasts]="5"> </app-toast-container>
+```
+
+**Posiciones disponibles:**
+
+- `top-left`, `top-center`, `top-right`
+- `bottom-left`, `bottom-center`, `bottom-right`
+
 ### Componentes
+
 Todos los componentes están construidos con Spartan-NG Helm y son completamente personalizables.
 
 ## 📱 Responsive Design
 
 El dashboard está completamente optimizado para:
+
 - 📱 Móviles (320px+)
 - 📱 Tablets (768px+)
 - 💻 Desktop (1024px+)
@@ -392,27 +509,35 @@ ng generate service <name>   # Generar servicio
 ## 🔧 Configuración
 
 ### Angular
+
 La configuración principal se encuentra en:
+
 - `angular.json` - Configuración del workspace con fileReplacements para entornos
 - `tsconfig.json` - Configuración de TypeScript
 - `src/app/app.config.ts` - Configuración de la aplicación con `withFetch()` habilitado
 - `src/environments/` - Configuración de entornos (desarrollo y producción)
 
 ### Entornos
+
 Configuración automática de entornos:
+
 - **Desarrollo**: `environment.development.ts` con `apiUrl: 'http://localhost:8000/api/v1'`
 - **Producción**: `environment.ts` con configuración optimizada
 - **Build**: `angular.json` configurado con `fileReplacements` automáticos
 
 ### TailwindCSS
+
 La configuración de Tailwind está en `tailwind.config.js` con:
+
 - Tema personalizado
 - Colores del design system
 - Animaciones personalizadas
 - Sombras modernas
 
 ### Autenticación
+
 Configuración completa de autenticación:
+
 - **Guards**: Protección automática de rutas
 - **Interceptors**: Manejo automático de headers y CSRF
 - **Services**: Integración completa con Laravel Sanctum
@@ -462,6 +587,7 @@ Las contribuciones son bienvenidas. Por favor:
 ## 📞 Soporte
 
 Si tienes preguntas o necesitas ayuda:
+
 - Crea un issue en el repositorio
 - Revisa la documentación de Angular
 - Consulta la documentación de TailwindCSS
@@ -470,4 +596,4 @@ Si tienes preguntas o necesitas ayuda:
 
 **Desarrollado con ❤️ usando Angular 19 y TailwindCSS v3**
 
-*Este dashboard sirve como plantilla base para proyectos que requieran una interfaz moderna y funcional para la gestión de datos geográficos.*
+_Este dashboard sirve como plantilla base para proyectos que requieran una interfaz moderna y funcional para la gestión de datos geográficos._

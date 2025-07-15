@@ -1,15 +1,14 @@
+@import "@angular/cdk/overlay-prebuilt.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "@angular/cdk/overlay-prebuilt.css";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 /* Modern Dashboard Styles */
 
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
   /* Light Theme - Modern Colors */
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -31,13 +30,15 @@
   --input: 214.3 31.8% 91.4%;
   --ring: 221.2 83.2% 53.3%;
   --radius: 0.75rem;
-  
+
   /* Modern shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 .dark {
@@ -61,27 +62,29 @@
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
   --ring: 224.3 76.3% 94.1%;
-  
+
   /* Dark mode shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4),
+    0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4),
+    0 8px 10px -6px rgb(0 0 0 / 0.4);
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   html {
     scroll-behavior: smooth;
   }
@@ -95,19 +98,19 @@
     backdrop-filter: blur(8px);
     transition: all 0.2s ease-in-out;
   }
-  
+
   .card-modern:hover {
     @apply shadow-md border-border;
     transform: translateY(-1px);
   }
-  
+
   /* Modern Button Styles */
   .btn-modern {
     @apply inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
     @apply disabled:pointer-events-none disabled:opacity-50;
   }
-  
+
   /* Modern Input Styles */
   .input-modern {
     @apply flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm;
@@ -116,64 +119,64 @@
     @apply focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
     transition: all 0.2s ease-in-out;
   }
-  
+
   /* Modern Sidebar */
   .sidebar-modern {
     @apply bg-card/95 backdrop-blur-md border-r border-border/50;
   }
-  
+
   /* Modern Navigation */
   .nav-item-modern {
     @apply relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200;
     @apply hover:bg-accent hover:text-accent-foreground;
   }
-  
+
   .nav-item-modern.active {
     @apply bg-primary text-primary-foreground shadow-sm;
   }
-  
+
   .nav-item-modern.active::before {
-    content: '';
+    content: "";
     @apply absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary-foreground;
   }
-  
+
   /* Modern Header */
   .header-modern {
     @apply bg-background/95 backdrop-blur-md border-b border-border/50;
   }
-  
+
   /* Modern Scrollbar */
   .scrollbar-modern {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
   }
-  
+
   .scrollbar-modern::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   .scrollbar-modern::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   .scrollbar-modern::-webkit-scrollbar-thumb {
     background: hsl(var(--muted-foreground) / 0.3);
     border-radius: 3px;
   }
-  
+
   .scrollbar-modern::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
   }
-  
+
   /* Modern Animations */
   .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;
   }
-  
+
   .animate-slide-up {
     animation: slideUp 0.3s ease-out;
   }
-  
+
   .animate-scale-in {
     animation: scaleIn 0.2s ease-out;
   }
