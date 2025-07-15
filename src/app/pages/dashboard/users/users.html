@@ -1,0 +1,325 @@
+<div class="space-y-8 p-6 max-w-7xl mx-auto animate-fade-in">
+  <!-- Header -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 animate-slide-up"
+  >
+    <div class="space-y-2">
+      <h1 class="text-4xl font-bold text-primary">Usuarios</h1>
+      <p class="text-muted-foreground text-lg">
+        Gestiona {{ totalUsers() }} usuarios del sistema
+      </p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <button
+        hlmBtn
+        variant="outline"
+        size="sm"
+        class="btn-modern hover:scale-105 transition-all duration-200"
+      >
+        <ng-icon hlm name="lucideDownload" size="sm" class="mr-2" />
+        Exportar
+      </button>
+      <button
+        hlmBtn
+        size="sm"
+        class="btn-modern hover:scale-105 transition-all duration-200"
+      >
+        Agregar Usuario
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="card-modern animate-slide-up" style="animation-delay: 100ms">
+    <div class="p-8">
+      <div class="flex flex-col lg:flex-row gap-6">
+        <!-- Search -->
+        <div class="flex-1">
+          <label class="block text-sm font-semibold text-foreground mb-3"
+            >Buscar Usuario</label
+          >
+          <div class="relative">
+            <ng-icon
+              hlm
+              name="lucideSearch"
+              size="sm"
+              class="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            />
+            <input
+              hlmInput
+              type="text"
+              placeholder="Buscar usuarios..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()"
+              class="input-modern pl-12 pr-4 py-4 text-sm w-full"
+            />
+          </div>
+        </div>
+
+        <!-- Role Filter -->
+        <div class="w-full lg:w-56">
+          <label class="block text-sm font-semibold text-foreground mb-3"
+            >Rol</label
+          >
+          <brn-select
+            [(ngModel)]="selectedRole"
+            (ngModelChange)="onRoleChange()"
+          >
+            <hlm-select-trigger class="h-12">
+              <hlm-select-value placeholder="Todos los roles" />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              <hlm-option value="all">Todos los roles</hlm-option>
+              <hlm-option value="admin">Administrador</hlm-option>
+              <hlm-option value="manager">Gerente</hlm-option>
+              <hlm-option value="employee">Empleado</hlm-option>
+              <hlm-option value="guest">Invitado</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="w-full lg:w-56">
+          <label class="block text-sm font-semibold text-foreground mb-3"
+            >Estado</label
+          >
+          <brn-select
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="onStatusChange()"
+          >
+            <hlm-select-trigger class="h-12">
+              <hlm-select-value placeholder="Estado" />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              <hlm-option value="all">Todos</hlm-option>
+              <hlm-option value="active">Activo</hlm-option>
+              <hlm-option value="inactive">Inactivo</hlm-option>
+              <hlm-option value="pending">Pendiente</hlm-option>
+              <hlm-option value="suspended">Suspendido</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Summary -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-2 animate-slide-up"
+    style="animation-delay: 200ms"
+  >
+    <div class="flex items-center space-x-3">
+      <div class="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
+      <p class="text-sm font-medium text-muted-foreground">
+        Mostrando
+        <span class="font-bold text-foreground"
+          >{{ paginatedUsers().length }}</span
+        >
+        de
+        <span class="font-bold text-foreground"
+          >{{ filteredUsers().length }}</span
+        >
+        usuarios
+      </p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <span class="text-sm font-medium text-muted-foreground"
+        >Filas por página:</span
+      >
+      <brn-select [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()">
+        <hlm-select-trigger class="w-24 h-10">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content>
+          <hlm-option value="10">10</hlm-option>
+          <hlm-option value="25">25</hlm-option>
+          <hlm-option value="50">50</hlm-option>
+          <hlm-option value="100">100</hlm-option>
+        </hlm-select-content>
+      </brn-select>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="card-modern animate-slide-up" style="animation-delay: 300ms">
+    <div class="overflow-hidden">
+      <div class="overflow-x-auto">
+        <table hlmTable class="w-full">
+          <thead hlmTHead class="bg-muted/30">
+            <tr hlmTr>
+              <th hlmTh class="w-12 py-4 px-6"></th>
+              <th hlmTh class="py-4 px-6 font-semibold text-foreground">
+                Usuario
+              </th>
+              <th hlmTh class="py-4 px-6 font-semibold text-foreground">
+                Email
+              </th>
+              <th hlmTh class="py-4 px-6 font-semibold text-foreground">Rol</th>
+              <th hlmTh class="py-4 px-6 font-semibold text-foreground">
+                Estado
+              </th>
+              <th hlmTh class="py-4 px-6 font-semibold text-foreground">
+                Departamento
+              </th>
+              <th hlmTh class="py-4 px-6 font-semibold text-foreground">
+                Último Login
+              </th>
+              <th hlmTh class="w-20 py-4 px-6 font-semibold text-foreground">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+
+          <tbody hlmTBody>
+            @for (user of paginatedUsers(); track user.id) {
+            <tr
+              hlmTr
+              class="group hover:bg-muted/50 transition-all duration-200 border-b border-border/50"
+            >
+              <td hlmTd class="py-4 px-6">
+                <div class="relative">
+                  <img
+                    [src]="user.avatar"
+                    [alt]="user.name"
+                    class="w-10 h-10 rounded-full object-cover group-hover:scale-110 transition-transform duration-200"
+                  />
+                </div>
+              </td>
+              <td hlmTd class="py-4 px-6">
+                <div class="flex flex-col">
+                  <span
+                    class="font-semibold text-foreground group-hover:text-primary transition-colors duration-200"
+                    >{{ user.name }}</span
+                  >
+                  <span class="text-sm text-muted-foreground mt-1"
+                    >{{ user.phone }}</span
+                  >
+                </div>
+              </td>
+              <td hlmTd class="py-4 px-6">
+                <span class="font-medium text-foreground"
+                  >{{ user.email }}</span
+                >
+              </td>
+              <td hlmTd class="py-4 px-6">
+                <span
+                  hlmBadge
+                  [variant]="getRoleVariant(user.role)"
+                  class="px-3 py-1 rounded-full text-xs font-medium"
+                  >{{ user.role }}</span
+                >
+              </td>
+              <td hlmTd class="py-4 px-6">
+                <span
+                  hlmBadge
+                  [variant]="getStatusVariant(user.status)"
+                  class="px-3 py-1 rounded-full text-xs font-medium"
+                  >{{ user.status }}</span
+                >
+              </td>
+              <td hlmTd class="py-4 px-6">
+                <span class="font-medium text-foreground"
+                  >{{ user.department }}</span
+                >
+              </td>
+              <td hlmTd class="py-4 px-6">
+                <span class="font-mono text-sm text-foreground"
+                  >{{ user.lastLogin }}</span
+                >
+              </td>
+              <td hlmTd class="py-4 px-6">
+                <div
+                  class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                >
+                  <button
+                    hlmBtn
+                    variant="ghost"
+                    size="sm"
+                    class="h-8 w-8 p-0 hover:bg-primary hover:text-primary-foreground transition-all duration-200"
+                  >
+                    <ng-icon hlm name="lucideEye" size="sm" />
+                  </button>
+                  <button
+                    hlmBtn
+                    variant="ghost"
+                    size="sm"
+                    class="h-8 w-8 p-0 hover:bg-secondary hover:text-secondary-foreground transition-all duration-200"
+                  >
+                    <ng-icon hlm name="lucidePencil" size="sm" />
+                  </button>
+                  <button
+                    hlmBtn
+                    variant="ghost"
+                    size="sm"
+                    class="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 transition-all duration-200"
+                  >
+                    <ng-icon hlm name="lucideTrash2" size="sm" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr hlmTr>
+              <td hlmTd colspan="8" class="text-center py-8">
+                <div class="flex flex-col items-center space-y-2">
+                  <ng-icon
+                    hlm
+                    name="lucideSearch"
+                    size="lg"
+                    class="text-gray-400"
+                  />
+                  <p class="text-gray-500 dark:text-gray-400">
+                    No se encontraron usuarios
+                  </p>
+                  <p class="text-sm text-gray-400 dark:text-gray-500">
+                    Intenta ajustar los filtros de búsqueda
+                  </p>
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-2 animate-slide-up"
+    style="animation-delay: 400ms"
+  >
+    <div class="flex items-center space-x-2">
+      <div class="h-2 w-2 rounded-full bg-secondary animate-pulse"></div>
+      <p class="text-sm font-medium text-muted-foreground">
+        Página
+        <span class="font-bold text-foreground">{{ currentPage() }}</span> de
+        <span class="font-bold text-foreground">{{ totalPages() }}</span>
+      </p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button
+        hlmBtn
+        variant="outline"
+        size="sm"
+        [disabled]="currentPage() === 1"
+        (click)="previousPage()"
+        class="btn-modern hover:scale-105 transition-all duration-200 disabled:hover:scale-100"
+      >
+        <ng-icon hlm name="lucideChevronLeft" size="sm" class="mr-1" />
+        Anterior
+      </button>
+      <button
+        hlmBtn
+        variant="outline"
+        size="sm"
+        [disabled]="currentPage() === totalPages()"
+        (click)="nextPage()"
+        class="btn-modern hover:scale-105 transition-all duration-200 disabled:hover:scale-100"
+      >
+        Siguiente
+        <ng-icon hlm name="lucideChevronRight" size="sm" class="ml-1" />
+      </button>
+    </div>
+  </div>
+</div>

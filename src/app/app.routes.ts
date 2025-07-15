@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { DashboardLayout } from './layout/dashboard-layout/dashboard-layout';
-import { Home } from './pages/dashboard/home/home.component';
-import { Countries } from './pages/dashboard/countries/countries.component';
-import { Statistics } from './pages/dashboard/statistics/statistics.component';
-import { Settings } from './pages/dashboard/settings/settings.component';
+import { Reports } from './pages/dashboard/reports/reports';
 import { NotFound } from './pages/not-found/not-found.component';
+import { Home } from './pages/dashboard/home/home';
+import { Users } from './pages/dashboard/users/users.component';
+import { Settings } from './pages/dashboard/settings/settings';
 
 export const routes: Routes = [
   {
@@ -19,8 +19,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: Home },
       { path: 'home', component: Home },
-      { path: 'countries', component: Countries },
-      { path: 'statistics', component: Statistics },
+      { path: 'users', component: Users },
+      { path: 'reports', component: Reports },
       { path: 'settings', component: Settings },
     ],
   },

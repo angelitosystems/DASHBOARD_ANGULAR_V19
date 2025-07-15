@@ -1,0 +1,602 @@
+<div class="space-y-8 p-6 max-w-7xl mx-auto animate-fade-in">
+  <!-- Header -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 animate-slide-up"
+  >
+    <div class="space-y-2">
+      <h1 class="text-4xl font-bold text-primary">Configuración</h1>
+      <p class="text-muted-foreground text-lg">
+        Personaliza tu experiencia y preferencias
+      </p>
+    </div>
+  </div>
+
+  <div
+    class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-slide-up"
+    style="animation-delay: 100ms"
+  >
+    <!-- Settings Navigation -->
+    <div class="lg:col-span-1">
+      <div class="card-modern sticky top-6">
+        <div class="p-2">
+          <nav class="space-y-2">
+            @for (section of settingSections(); track section.id; let i =
+            $index) {
+            <button
+              (click)="setActiveSection(section.id)"
+              [class]="'w-full flex items-center px-4 py-4 text-left text-sm font-semibold rounded-xl transition-all duration-200 group ' + 
+                      (activeSection() === section.id 
+                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25' 
+                        : 'text-foreground hover:bg-muted/80 hover:scale-[1.02]')"
+              [style.animation-delay]="(i * 50) + 'ms'"
+            >
+              <div
+                [class]="'p-2 rounded-lg mr-4 transition-all duration-200 ' + 
+                      (activeSection() === section.id 
+                        ? 'bg-primary-foreground/20' 
+                        : 'bg-muted group-hover:bg-muted-foreground/10')"
+              >
+                <ng-icon hlm [name]="section.icon" size="sm" />
+              </div>
+              {{ section.name }}
+            </button>
+            }
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Content -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Profile Settings -->
+      @if (activeSection() === 'profile') {
+      <div class="card-modern animate-slide-up" style="animation-delay: 200ms">
+        <div class="p-6 border-b border-border/50">
+          <div class="flex items-center space-x-3 mb-2">
+            <div class="p-2 bg-primary/10 rounded-lg">
+              <ng-icon hlm name="lucideUser" size="sm" class="text-primary" />
+            </div>
+            <h3 class="text-xl font-bold text-foreground">Perfil de Usuario</h3>
+          </div>
+          <p class="text-muted-foreground">
+            Actualiza tu información personal y foto de perfil
+          </p>
+        </div>
+        <div class="p-8 space-y-8">
+          <!-- Profile Photo -->
+          <div class="flex items-center space-x-6">
+            <div class="relative group">
+              <div
+                class="w-24 h-24 bg-primary rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300"
+              >
+                <span class="text-3xl font-bold text-white">JD</span>
+              </div>
+              <button
+                hlmBtn
+                size="sm"
+                class="absolute -bottom-2 -right-2 h-10 w-10 rounded-full p-0 shadow-lg hover:scale-110 transition-all duration-200"
+              >
+                <ng-icon hlm name="lucideCamera" size="sm" />
+              </button>
+            </div>
+            <div class="space-y-2">
+              <h3 class="text-lg font-bold text-foreground">Foto de Perfil</h3>
+              <p class="text-sm text-muted-foreground">
+                JPG, PNG o GIF. Máximo 2MB.
+              </p>
+              <div class="flex space-x-2">
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+                  >Verificado</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-border/50"></div>
+
+          <!-- Profile Form -->
+          <form [formGroup]="profileForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-3">
+                <label
+                  hlmLabel
+                  for="firstName"
+                  class="text-sm font-semibold text-foreground"
+                  >Nombre</label
+                >
+                <input
+                  hlmInput
+                  id="firstName"
+                  formControlName="firstName"
+                  placeholder="Tu nombre"
+                  class="input-modern"
+                />
+              </div>
+              <div class="space-y-3">
+                <label
+                  hlmLabel
+                  for="lastName"
+                  class="text-sm font-semibold text-foreground"
+                  >Apellido</label
+                >
+                <input
+                  hlmInput
+                  id="lastName"
+                  formControlName="lastName"
+                  placeholder="Tu apellido"
+                  class="input-modern"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <label
+                hlmLabel
+                for="email"
+                class="text-sm font-semibold text-foreground"
+                >Correo Electrónico</label
+              >
+              <input
+                hlmInput
+                id="email"
+                type="email"
+                formControlName="email"
+                placeholder="tu@email.com"
+                class="input-modern"
+              />
+            </div>
+
+            <div class="space-y-3">
+              <label
+                hlmLabel
+                for="bio"
+                class="text-sm font-semibold text-foreground"
+                >Biografía</label
+              >
+              <textarea
+                hlmInput
+                id="bio"
+                formControlName="bio"
+                rows="4"
+                placeholder="Cuéntanos sobre ti..."
+                class="input-modern resize-none"
+              ></textarea>
+            </div>
+
+            <div class="space-y-3">
+              <label
+                hlmLabel
+                for="location"
+                class="text-sm font-semibold text-foreground"
+                >Ubicación</label
+              >
+              <input
+                hlmInput
+                id="location"
+                formControlName="location"
+                placeholder="Ciudad, País"
+                class="input-modern"
+              />
+            </div>
+
+            <div class="flex justify-end space-x-4 pt-4">
+              <button
+                hlmBtn
+                variant="outline"
+                type="button"
+                class="btn-modern-outline"
+              >
+                Cancelar
+              </button>
+              <button hlmBtn type="submit" class="btn-modern">
+                <ng-icon hlm name="lucideSave" size="sm" class="mr-2" />
+                Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      }
+
+      <!-- Appearance Settings -->
+      @if (activeSection() === 'appearance') {
+      <div class="card-modern animate-slide-up" style="animation-delay: 200ms">
+        <div class="p-6 border-b border-border/50">
+          <div class="flex items-center space-x-3 mb-2">
+            <div class="p-2 bg-primary/10 rounded-lg">
+              <ng-icon
+                hlm
+                name="lucidePalette"
+                size="sm"
+                class="text-primary"
+              />
+            </div>
+            <h3 class="text-xl font-bold text-foreground">Apariencia</h3>
+          </div>
+          <p class="text-muted-foreground">
+            Personaliza el tema y la apariencia de la aplicación
+          </p>
+        </div>
+        <div class="p-8 space-y-8">
+          <!-- Theme Selection -->
+          <div class="space-y-6">
+            <h4 class="text-lg font-bold text-foreground flex items-center">
+              <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+              Tema
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              @for (theme of themes(); track theme.value; let i = $index) {
+              <button
+                (click)="setTheme(theme.value)"
+                [class]="'relative p-6 rounded-xl border-2 transition-all duration-300 group hover:scale-105 ' + 
+                          (selectedTheme() === theme.value 
+                            ? 'border-primary bg-primary/5 shadow-lg shadow-primary/20' 
+                            : 'border-border hover:border-primary/50 hover:bg-muted/50')"
+                [style.animation-delay]="(i * 100) + 'ms'"
+              >
+                <div class="flex flex-col items-center space-y-3">
+                  <div
+                    class="p-3 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 bg-muted"
+                  >
+                    <ng-icon
+                      hlm
+                      [name]="theme.icon"
+                      size="lg"
+                      [class]="theme.color"
+                    />
+                  </div>
+                  <span class="text-sm font-semibold text-foreground"
+                    >{{ theme.name }}</span
+                  >
+                </div>
+                @if (selectedTheme() === theme.value) {
+                <div
+                  class="absolute -top-2 -right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-lg"
+                >
+                  <ng-icon
+                    hlm
+                    name="lucideCheck"
+                    size="xs"
+                    class="text-primary-foreground"
+                  />
+                </div>
+                }
+              </button>
+              }
+            </div>
+          </div>
+
+          <div class="border-t border-border/50"></div>
+
+          <!-- Language Selection -->
+          <div class="space-y-6">
+            <h4 class="text-lg font-bold text-foreground flex items-center">
+              <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+              Idioma
+            </h4>
+            <div class="space-y-3">
+              <label hlmLabel class="text-sm font-semibold text-foreground"
+                >Idioma de la interfaz</label
+              >
+              <brn-select [(ngModel)]="selectedLanguage">
+                <hlm-select-trigger class="input-modern">
+                  <hlm-select-value placeholder="Seleccionar idioma" />
+                </hlm-select-trigger>
+                <hlm-select-content>
+                  <hlm-option value="es">Español</hlm-option>
+                  <hlm-option value="en">English</hlm-option>
+                  <hlm-option value="fr">Français</hlm-option>
+                  <hlm-option value="de">Deutsch</hlm-option>
+                </hlm-select-content>
+              </brn-select>
+            </div>
+          </div>
+
+          <div class="border-t border-border/50"></div>
+
+          <!-- Font Size -->
+          <div class="space-y-6">
+            <h4 class="text-lg font-bold text-foreground flex items-center">
+              <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+              Tamaño de Fuente
+            </h4>
+            <div class="space-y-3">
+              <label hlmLabel class="text-sm font-semibold text-foreground"
+                >Tamaño de texto</label
+              >
+              <brn-select [(ngModel)]="selectedFontSize">
+                <hlm-select-trigger class="input-modern">
+                  <hlm-select-value placeholder="Seleccionar tamaño" />
+                </hlm-select-trigger>
+                <hlm-select-content>
+                  <hlm-option value="small">Pequeño</hlm-option>
+                  <hlm-option value="medium">Mediano</hlm-option>
+                  <hlm-option value="large">Grande</hlm-option>
+                </hlm-select-content>
+              </brn-select>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Notifications Settings -->
+      @if (activeSection() === 'notifications') {
+      <div class="card-modern animate-slide-up" style="animation-delay: 200ms">
+        <div class="p-6 border-b border-border/50">
+          <div class="flex items-center space-x-3 mb-2">
+            <div class="p-2 bg-primary/10 rounded-lg">
+              <ng-icon hlm name="lucideBell" size="sm" class="text-primary" />
+            </div>
+            <h3 class="text-xl font-bold text-foreground">Notificaciones</h3>
+          </div>
+          <p class="text-muted-foreground">
+            Configura cómo y cuándo recibir notificaciones
+          </p>
+        </div>
+        <div class="p-8 space-y-8">
+          @for (notification of notificationSettings(); track notification.id;
+          let i = $index) {
+          <div
+            class="flex items-center justify-between p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-200 group"
+            [style.animation-delay]="(i * 100) + 'ms'"
+          >
+            <div class="flex items-start space-x-4">
+              <div
+                class="p-3 bg-muted/50 group-hover:bg-primary/10 rounded-lg transition-all duration-200"
+              >
+                <ng-icon
+                  hlm
+                  name="lucideBell"
+                  size="sm"
+                  class="text-muted-foreground group-hover:text-primary transition-colors duration-200"
+                />
+              </div>
+              <div class="space-y-2">
+                <h4 class="text-sm font-semibold text-foreground">
+                  {{ notification.title }}
+                </h4>
+                <p class="text-sm text-muted-foreground leading-relaxed">
+                  {{ notification.description }}
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-3">
+              <brn-switch [(ngModel)]="notification.enabled">
+                <hlm-switch class="data-[state=checked]:bg-primary" />
+              </brn-switch>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+      }
+
+      <!-- Security Settings -->
+      @if (activeSection() === 'security') {
+      <div class="card-modern animate-slide-up" style="animation-delay: 200ms">
+        <div class="p-6 border-b border-border/50">
+          <div class="flex items-center space-x-3 mb-2">
+            <div class="p-2 bg-primary/10 rounded-lg">
+              <ng-icon hlm name="lucideShield" size="sm" class="text-primary" />
+            </div>
+            <h3 class="text-xl font-bold text-foreground">Seguridad</h3>
+          </div>
+          <p class="text-muted-foreground">
+            Gestiona tu contraseña y configuración de seguridad
+          </p>
+        </div>
+        <div class="p-8 space-y-8">
+          <!-- Change Password -->
+          <div class="space-y-6">
+            <h4 class="text-lg font-bold text-foreground flex items-center">
+              <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+              Cambiar Contraseña
+            </h4>
+            <form [formGroup]="passwordForm" class="space-y-6">
+              <div class="space-y-3">
+                <label
+                  hlmLabel
+                  for="currentPassword"
+                  class="text-sm font-semibold text-foreground"
+                  >Contraseña Actual</label
+                >
+                <div class="relative">
+                  <input
+                    hlmInput
+                    id="currentPassword"
+                    [type]="showCurrentPassword() ? 'text' : 'password'"
+                    formControlName="currentPassword"
+                    placeholder="Ingresa tu contraseña actual"
+                    class="input-modern"
+                  />
+                  <button
+                    type="button"
+                    (click)="toggleCurrentPassword()"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <ng-icon
+                      hlm
+                      [name]="showCurrentPassword() ? 'lucideEyeOff' : 'lucideEye'"
+                      size="sm"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <label
+                  hlmLabel
+                  for="newPassword"
+                  class="text-sm font-semibold text-foreground"
+                  >Nueva Contraseña</label
+                >
+                <div class="relative">
+                  <input
+                    hlmInput
+                    id="newPassword"
+                    [type]="showNewPassword() ? 'text' : 'password'"
+                    formControlName="newPassword"
+                    placeholder="Ingresa tu nueva contraseña"
+                    class="input-modern"
+                  />
+                  <button
+                    type="button"
+                    (click)="toggleNewPassword()"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <ng-icon
+                      hlm
+                      [name]="showNewPassword() ? 'lucideEyeOff' : 'lucideEye'"
+                      size="sm"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <label
+                  hlmLabel
+                  for="confirmPassword"
+                  class="text-sm font-semibold text-foreground"
+                  >Confirmar Nueva Contraseña</label
+                >
+                <div class="relative">
+                  <input
+                    hlmInput
+                    id="confirmPassword"
+                    [type]="showConfirmPassword() ? 'text' : 'password'"
+                    formControlName="confirmPassword"
+                    placeholder="Confirma tu nueva contraseña"
+                    class="input-modern"
+                  />
+                  <button
+                    type="button"
+                    (click)="toggleConfirmPassword()"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <ng-icon
+                      hlm
+                      [name]="showConfirmPassword() ? 'lucideEyeOff' : 'lucideEye'"
+                      size="sm"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <button hlmBtn type="submit" class="btn-modern">
+                  <ng-icon hlm name="lucideSave" size="sm" class="mr-2" />
+                  Cambiar Contraseña
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="border-t border-border/50"></div>
+
+          <!-- Two-Factor Authentication -->
+          <div class="space-y-6">
+            <div
+              class="flex items-center justify-between p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-200"
+            >
+              <div class="flex items-start space-x-4">
+                <div class="p-3 bg-muted/50 rounded-lg">
+                  <ng-icon
+                    hlm
+                    name="lucideShield"
+                    size="sm"
+                    class="text-muted-foreground"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <h4 class="text-lg font-bold text-foreground">
+                    Autenticación de Dos Factores
+                  </h4>
+                  <p class="text-sm text-muted-foreground leading-relaxed">
+                    Agrega una capa extra de seguridad a tu cuenta
+                  </p>
+                </div>
+              </div>
+              <brn-switch [(ngModel)]="twoFactorEnabled">
+                <hlm-switch class="data-[state=checked]:bg-primary" />
+              </brn-switch>
+            </div>
+
+            @if (twoFactorEnabled()) {
+            <div
+              class="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl animate-slide-up"
+            >
+              <div class="flex items-center space-x-3 mb-2">
+                <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                  <ng-icon
+                    hlm
+                    name="lucideCheck"
+                    size="sm"
+                    class="text-green-600 dark:text-green-400"
+                  />
+                </div>
+                <span
+                  class="text-sm font-semibold text-green-800 dark:text-green-200"
+                  >Autenticación de dos factores activada</span
+                >
+              </div>
+              <p class="text-sm text-green-700 dark:text-green-300">
+                Tu cuenta está protegida con autenticación de dos factores
+              </p>
+            </div>
+            }
+          </div>
+
+          <!-- Active Sessions -->
+          <div class="space-y-6">
+            <h4 class="text-lg font-bold text-foreground flex items-center">
+              <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+              Sesiones Activas
+            </h4>
+            <div class="space-y-4">
+              @for (session of activeSessions(); track session.id; let i =
+              $index) {
+              <div
+                class="flex items-center justify-between p-6 border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-200 group"
+                [style.animation-delay]="(i * 100) + 'ms'"
+              >
+                <div class="flex items-center space-x-4">
+                  <div
+                    class="p-3 bg-muted/50 group-hover:bg-primary/10 rounded-lg transition-all duration-200"
+                  >
+                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                  <div class="space-y-1">
+                    <p class="text-sm font-semibold text-foreground">
+                      {{ session.device }}
+                    </p>
+                    <p class="text-xs text-muted-foreground">
+                      {{ session.location }} • {{ session.lastActive }}
+                    </p>
+                  </div>
+                </div>
+                @if (!session.current) {
+                <button
+                  hlmBtn
+                  variant="outline"
+                  size="sm"
+                  class="btn-modern-outline"
+                >
+                  <ng-icon hlm name="lucideX" size="sm" class="mr-2" />
+                  Cerrar
+                </button>
+                } @else {
+                <span hlmBadge variant="secondary">Actual</span>
+                }
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>

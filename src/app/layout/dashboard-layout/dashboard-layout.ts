@@ -94,17 +94,17 @@ export class DashboardLayout {
   userMenuOpen = signal(false);
 
   menuItems: MenuItem[] = [
-    { icon: 'lucideHouse', label: 'Inicio', route: '/dashboard' },
+    { icon: 'lucideHouse', label: 'Dashboard', route: '/dashboard' },
     {
-      icon: 'lucideFlag',
-      label: 'Países',
-      route: '/dashboard/countries',
-      badge: '195',
+      icon: 'lucideUsers',
+      label: 'Usuarios',
+      route: '/dashboard/users',
+      badge: 'New',
     },
     {
       icon: 'lucideChartBar',
-      label: 'Estadísticas',
-      route: '/dashboard/statistics',
+      label: 'Reportes',
+      route: '/dashboard/reports',
     },
     {
       icon: 'lucideSettings',
